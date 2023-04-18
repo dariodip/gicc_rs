@@ -1,0 +1,69 @@
+env_files = [{ path = "./.env.dist.local", profile = "development" }]
+
+[tasks.clippy]
+command = "cargo"
+args = ["clippy", "--", "-D", "warnings"]
+
+[tasks.format-check]
+command = "cargo"
+args = ["fmt", "--all", "--", "--check"]
+
+
+[tasks.format]
+command = "cargo"
+args = ["fmt", "--all", "--"]
+
+[tasks.watch]
+description = "Run the app in dev mode."
+command = "cargo"
+args = ["run", "--features=dev"]
+watch = true
+
+[tasks.run]
+description = "Run the app in dev mode."
+command = "cargo"
+args = ["run", "--features=dev"]
+
+[tasks.release]
+description = "Makes release."
+run_task = { name = ["sweep-start", "build-release", "archive"] }
+
+[tasks.sweep-start]
+description = "Start cargo sweep"
+command = "cargo"
+args = ["sweep", "-s"]
+
+[tasks.build-release]
+description = "Runs cargo build --release."
+command = "cargo"
+args = ["build", "--release", "--features=${ENV}"]
+
+[tasks.cache-cleanup]
+description = "Clean CI cache"
+dependencies = ["cargo-prune", "delete-artifacts", "print-stats"]
+
+[tasks.cargo-prune]
+description = "Run cargo prune"
+command = "cargo"
+args = ["prune"]
+
+[tasks.print-stats]
+description = "Print cache size"
+command = "du"
+args = ["-sh", "target", ".cargo"]
+
+[tasks.test]
+description = "Run tests."
+command = "cargo"
+args = ["test"]
+
+[tasks.watch-test]
+description = "Run tests on file change."
+command = "cargo"
+args = ["test"]
+watch = true
+
+[tasks.test-coverage]
+description = "Run tests coverage."
+command = "cargo"
+args = ["tarpaulin", "--exclude-files", "target"]
